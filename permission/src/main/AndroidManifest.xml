@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- No permissions here on purpose: each app declares only the ones it actually uses. -->
+
+    <application>
+        <activity
+            android:name=".PermissionActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:theme="@style/facilis_permission_Invisible" />
+
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="io.github.al3j4ndrolm.facilis.permission.FacilisPermissionInitializer"
+                android:value="androidx.startup" />
+        </provider>
+    </application>
+</manifest>

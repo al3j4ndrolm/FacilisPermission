@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="facilis_permission_continue">Continue</string>
+    <string name="facilis_permission_not_now">Not now</string>
+    <string name="facilis_permission_open_settings">Open settings</string>
+    <string name="facilis_permission_blocked_hint">This permission is turned off. You can turn it on in Settings.</string>
+</resources>
