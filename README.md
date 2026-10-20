@@ -6,6 +6,10 @@
 
 **Android runtime permissions in one line.** No `registerForActivityResult`, no version checks, no "don't ask again" bookkeeping.
 
+<p align="center">
+  <img src="docs/social-preview.png" alt="FacilisPermission: Android permissions in one line" width="640">
+</p>
+
 Part of the Facilis family, with [FacilisCam](https://github.com/al3j4ndrolm/FacilisCam) and [FacilisStorage](https://github.com/al3j4ndrolm/FacilisStorage).
 
 ```kotlin
