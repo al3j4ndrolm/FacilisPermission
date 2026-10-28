@@ -98,10 +98,10 @@ Then add one dependency (min SDK 23):
 
 ```kotlin
 // Compose apps: rememberPermission, plus everything else
-implementation("com.github.al3j4ndrolm.FacilisPermission:permission-compose:1.0.1")
+implementation("com.github.al3j4ndrolm.FacilisPermission:permission-compose:1.0.2")
 
 // Views apps
-implementation("com.github.al3j4ndrolm.FacilisPermission:permission:1.0.1")
+implementation("com.github.al3j4ndrolm.FacilisPermission:permission:1.0.2")
 ```
 
 ## Good to know

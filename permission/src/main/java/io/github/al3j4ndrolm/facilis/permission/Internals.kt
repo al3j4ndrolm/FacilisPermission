@@ -119,11 +119,18 @@ internal object PermissionSession {
         if (current == null) startNext()
     }
 
-    private fun startNext() {
+    private fun startNext(lookedAgain: Boolean = false) {
+        if (queue.isEmpty()) return
         val activity = ActivityTracker.resumedActivity
         if (activity == null) {
             // Ask once the screen is resumed: onActivityResumed calls deliverPending.
             if (ActivityTracker.screenComing) return
+            if (!lookedAgain) {
+                // A screen may be starting right now without Android having said so yet (e.g. a
+                // ViewModel created before super.onCreate), so look again once that's done.
+                mainHandler.post { if (current == null && results.isEmpty()) startNext(lookedAgain = true) }
+                return
+            }
             // Nothing on screen or on its way (called from the background): a dialog can't show, so
             // answer with the current state now rather than wait for the app to be opened again.
             while (queue.isNotEmpty()) {
