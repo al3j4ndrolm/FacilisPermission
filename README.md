@@ -98,16 +98,17 @@ Then add one dependency (min SDK 23):
 
 ```kotlin
 // Compose apps: rememberPermission, plus everything else
-implementation("com.github.al3j4ndrolm.FacilisPermission:permission-compose:1.0.0")
+implementation("com.github.al3j4ndrolm.FacilisPermission:permission-compose:1.0.1")
 
 // Views apps
-implementation("com.github.al3j4ndrolm.FacilisPermission:permission:1.0.0")
+implementation("com.github.al3j4ndrolm.FacilisPermission:permission:1.0.1")
 ```
 
 ## Good to know
 
 - Requests run one at a time, and results arrive once your screen is resumed, so it's safe to navigate in the callback.
-- Called with nothing on screen (for example from the background), `request` can't show a dialog and returns the current state instead.
+- Called before your screen is showing (from `onCreate` or a ViewModel's `init`), `request` waits for it, then asks.
+- Called with nothing on screen or on its way (for example from the background), `request` can't show a dialog and answers right away with the current state.
 - Before Android 13, notifications can't be requested: `Notifications` is `PermanentlyDenied` if the user turned them off, and `openSettings()` is the fix.
 - Picking photos? Android's photo picker needs no permission at all. Use `Photos` only if you need to read the whole library.
 

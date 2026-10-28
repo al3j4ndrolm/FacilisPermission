@@ -9,6 +9,8 @@ import android.os.Handler
 import android.os.Looper
 import androidx.startup.Initializer
 import java.lang.ref.WeakReference
+import java.util.Collections
+import java.util.WeakHashMap
 
 /**
  * Knows the app's current activity, so requests work without passing a Context.
@@ -20,6 +22,9 @@ internal object ActivityTracker : Application.ActivityLifecycleCallbacks {
     private var resumed: WeakReference<Activity>? = null
     private val mainHandler = Handler(Looper.getMainLooper())
 
+    /** Activities created or started but not stopped yet: on screen, or about to be. */
+    private val showing: MutableSet<Activity> = Collections.newSetFromMap(WeakHashMap())
+
     val appContext: Context
         get() = appContextOrNull ?: error(
             "FacilisPermission isn't initialized. Make sure androidx.startup's InitializationProvider " +
@@ -29,6 +34,13 @@ internal object ActivityTracker : Application.ActivityLifecycleCallbacks {
     /** The activity on screen right now, if any (never the permission screen itself). */
     val resumedActivity: Activity?
         get() = resumed?.get()?.takeUnless { it.isFinishing || it.isDestroyed }
+
+    /**
+     * Whether a screen is on its way, e.g. called from `onCreate` or a ViewModel's `init` before
+     * the first frame, or while switching screens. False when the app is in the background.
+     */
+    val screenComing: Boolean
+        get() = showing.any { !it.isFinishing }
 
     fun install(context: Context) {
         if (appContextOrNull != null) return
@@ -50,11 +62,21 @@ internal object ActivityTracker : Application.ActivityLifecycleCallbacks {
 
     override fun onActivityDestroyed(activity: Activity) {
         if (resumed?.get() === activity) resumed = null
+        showing -= activity
     }
 
-    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) = Unit
-    override fun onActivityStarted(activity: Activity) = Unit
-    override fun onActivityStopped(activity: Activity) = Unit
+    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+        if (activity !is PermissionActivity) showing += activity
+    }
+
+    override fun onActivityStarted(activity: Activity) {
+        if (activity !is PermissionActivity) showing += activity
+    }
+
+    override fun onActivityStopped(activity: Activity) {
+        showing -= activity
+    }
+
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) = Unit
 }
 
@@ -72,6 +94,7 @@ internal object PermissionSession {
 
     private val queue = ArrayDeque<Request>()
     private val results = ArrayDeque<Pair<Request, Boolean>>()
+    private val mainHandler = Handler(Looper.getMainLooper())
 
     /** The request the permission screen is working on. */
     var current: Request? = null
@@ -97,13 +120,20 @@ internal object PermissionSession {
     }
 
     private fun startNext() {
-        val next = queue.removeFirstOrNull() ?: return
         val activity = ActivityTracker.resumedActivity
         if (activity == null) {
-            // Can't show a dialog with nothing on screen (e.g. called from the background).
-            results.addLast(next to FacilisPermission.check(*next.permissions.toTypedArray()))
+            // Ask once the screen is resumed: onActivityResumed calls deliverPending.
+            if (ActivityTracker.screenComing) return
+            // Nothing on screen or on its way (called from the background): a dialog can't show, so
+            // answer with the current state now rather than wait for the app to be opened again.
+            while (queue.isNotEmpty()) {
+                val request = queue.removeFirst()
+                val granted = FacilisPermission.check(*request.permissions.toTypedArray())
+                mainHandler.post { request.onResult(granted) }
+            }
             return
         }
+        val next = queue.removeFirstOrNull() ?: return
         current = next
         activity.startActivity(Intent(activity, PermissionActivity::class.java))
         @Suppress("DEPRECATION")
