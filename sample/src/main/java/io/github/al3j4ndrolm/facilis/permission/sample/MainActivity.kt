@@ -55,6 +55,7 @@ private val reasons = mapOf(
     Permission.Photos to "Photos let you pick a profile picture.",
     Permission.Contacts to "Contacts let you invite classmates.",
     Permission.Bluetooth to "Bluetooth connects to nearby devices.",
+    Permission.PhysicalActivity to "Physical activity counts your steps on the way to class.",
 )
 
 @Composable

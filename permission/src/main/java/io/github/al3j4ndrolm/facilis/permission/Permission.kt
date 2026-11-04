@@ -22,6 +22,9 @@ enum class Permission {
 
     /** Finding and connecting to Bluetooth devices. Android 12+ asks; older versions need nothing. */
     Bluetooth,
+
+    /** Counting steps and recognizing activities like walking. Android 10+ asks; older versions need nothing. */
+    PhysicalActivity,
 }
 
 enum class PermissionStatus {
@@ -63,6 +66,7 @@ internal fun Permission.androidPermissions(sdk: Int): List<String> = when (this)
     } else {
         emptyList()
     }
+    Permission.PhysicalActivity -> if (sdk >= 29) listOf(Manifest.permission.ACTIVITY_RECOGNITION) else emptyList()
 }
 
 /**

@@ -70,6 +70,7 @@ Each one picks the right Android permissions for the device's Android version. A
 | `Photos` | `READ_MEDIA_IMAGES`, optionally `READ_MEDIA_VISUAL_USER_SELECTED` (Android 14+ "some photos"), and `READ_EXTERNAL_STORAGE` with `android:maxSdkVersion="32"` |
 | `Contacts` | `READ_CONTACTS` |
 | `Bluetooth` | `BLUETOOTH_SCAN` and/or `BLUETOOTH_CONNECT` (asked on Android 12+ only) |
+| `PhysicalActivity` | `ACTIVITY_RECOGNITION` (asked on Android 10+ only), e.g. to count steps |
 
 For example:
 
@@ -98,10 +99,10 @@ Then add one dependency (min SDK 23):
 
 ```kotlin
 // Compose apps: rememberPermission, plus everything else
-implementation("com.github.al3j4ndrolm.FacilisPermission:permission-compose:1.0.2")
+implementation("com.github.al3j4ndrolm.FacilisPermission:permission-compose:1.1.0")
 
 // Views apps
-implementation("com.github.al3j4ndrolm.FacilisPermission:permission:1.0.2")
+implementation("com.github.al3j4ndrolm.FacilisPermission:permission:1.1.0")
 ```
 
 ## Good to know

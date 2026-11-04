@@ -41,6 +41,12 @@ class PermissionLogicTest {
     }
 
     @Test
+    fun physicalActivityOnlyNeedsAskingOnAndroid10() {
+        assertEquals(emptyList<String>(), Permission.PhysicalActivity.androidPermissions(28))
+        assertEquals(listOf("android.permission.ACTIVITY_RECOGNITION"), Permission.PhysicalActivity.androidPermissions(29))
+    }
+
+    @Test
     fun locationAsksForPreciseAndApproximate() {
         assertEquals(listOf(fine, coarse), Permission.Location.androidPermissions(37))
     }
