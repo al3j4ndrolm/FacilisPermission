@@ -1,7 +1,6 @@
 # FacilisPermission
 
 [![JitPack](https://jitpack.io/v/al3j4ndrolm/FacilisPermission.svg)](https://jitpack.io/#al3j4ndrolm/FacilisPermission)
-[![Build](https://github.com/al3j4ndrolm/FacilisPermission/actions/workflows/build.yml/badge.svg)](https://github.com/al3j4ndrolm/FacilisPermission/actions/workflows/build.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 **Android runtime permissions in one line.** No `registerForActivityResult`, no version checks, no "don't ask again" bookkeeping.
